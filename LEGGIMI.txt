@@ -13,6 +13,9 @@ COME USARLA
     in cm sullo zero di Punta della Salute. Senza ponti l'app non dà nessun giudizio.
  4. Altezza mezzo, margine di sicurezza e soglia di attenzione sono già 185 / 20 / 10 cm.
 
+PROXY GIA' IMPOSTATO
+ L'app parte già con il proxy https://maree-proxy.phoenix-tourer.workers.dev/ (campo modificabile nelle Impostazioni).
+
 SE I DATI NON SI CARICANO
  L'app mostra un avviso. Probabile causa: il portale del Comune non consente la lettura diretta
  dal browser (CORS) o blocca le richieste automatiche. Soluzione: pubblicare worker.js come

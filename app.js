@@ -4,6 +4,7 @@ const URLS={liv:BASE+"livello.json",prev:BASE+"previsione.json",astro:BASE+"as20
 const NOMI={liv:"Livelli misurati",prev:"Previsione",astro:"Marea astronomica 2026",astro27:"Marea astronomica 2027"};
 const DST={liv:"liv",prev:"ext",astro:"a26",astro27:"a27"};
 const SALUTE={lat:45.4311,lon:12.3364};
+const PROXY0="https://maree-proxy.phoenix-tourer.workers.dev/?url={url}";
 //#core
 const solare=s=>Date.parse(String(s).replace(" ","T")+"+01:00");
 const num=v=>parseFloat(String(v).replace(",","."));
@@ -45,6 +46,7 @@ const $=id=>document.getElementById(id);
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 let cfg=Object.assign({h:185,s:20,a:10,proxy:"",ponti:[]},ls.get("mp.cfg",{}));
+if(!cfg.proxy)cfg.proxy=PROXY0;
 const save=()=>ls.set("mp.cfg",cfg);
 const S={d:{},err:{},off:{},last:{},passoOk:true};
 const hhmm=t=>new Date(t).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",timeZone:"Europe/Rome"});
@@ -56,7 +58,7 @@ function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=
 async function getJson(key){
  const url=URLS[key];let err=null;
  let cache=null;try{cache=window.caches?await caches.open("dati-v1"):null;}catch(e){}
- const tries=[url];if(cfg.proxy&&cfg.proxy.indexOf("{url}")>=0)tries.push(cfg.proxy.replace("{url}",encodeURIComponent(url)));
+ const tries=[url];if(cfg.proxy&&cfg.proxy.indexOf("{url}")>=0)tries.unshift(cfg.proxy.replace("{url}",encodeURIComponent(url)));
  for(const u of tries){try{const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);
   const data=await r.clone().json();if(cache){try{await cache.put(url,r);}catch(e){}}ls.set("mp.ts."+key,Date.now());return{data:data,off:false};}
   catch(e){err=e;}}
