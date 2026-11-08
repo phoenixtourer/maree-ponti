@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12445c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>Maree e ponti</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f1f4f5;--card:#fff;--ink:#10242f;--mute:#5b6c75;--line:#d3dcdf;--acc:#12445c;
+--ok:#1b7a4b;--okbg:#e3f3ea;--warn:#8a5a00;--warnbg:#fdf0cf;--bad:#b3261e;--badbg:#fbe3e1;--nd:#5b6c75;--ndbg:#e6eaec;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1a21;--card:#16262f;--ink:#e8eff2;--mute:#9fb0b8;--line:#2b3f4a;--acc:#7cc4e2;
+--ok:#63d19a;--okbg:#17372a;--warn:#f1c25a;--warnbg:#3b2f10;--bad:#ff8c84;--badbg:#401c1a;--nd:#9fb0b8;--ndbg:#22333c;color-scheme:dark}}
+*,*::before,*::after{box-sizing:inherit}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+h1{font-size:1.3rem;margin:0}
+.stato{font-size:1.15rem;font-weight:600;margin:10px 0 2px}
+.agg{color:var(--mute);font-size:.88rem;margin:0 0 10px}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:9px 14px;min-height:44px}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.avviso{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:9px 12px;margin:0 0 8px;font-size:.92rem}
+.vuoto{background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:14px;color:var(--mute)}
+.bridge{display:grid;grid-template-columns:10px 1fr auto;gap:12px;align-items:center;padding:12px 14px;margin-bottom:10px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.bar{align-self:stretch;border-radius:4px;background:var(--nd)}
+.ok .bar{background:var(--ok)}.attenzione .bar{background:var(--warn)}.non_passa .bar{background:var(--bad)}
+.name{font-weight:700;font-size:1.05rem}.win{color:var(--mute);font-size:.9rem}.crit{color:var(--bad);font-weight:600}
+.badge{font-weight:700;border-radius:8px;padding:8px 10px;text-align:center;min-width:96px;background:var(--ndbg);color:var(--nd)}
+.badge small{display:block;font-weight:400;font-size:.8rem}
+.ok .badge{background:var(--okbg);color:var(--ok)}.attenzione .badge{background:var(--warnbg);color:var(--warn)}.non_passa .badge{background:var(--badbg);color:var(--bad)}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:14px}
+summary{font-weight:600;min-height:32px}
+label{display:block;font-size:.85rem;color:var(--mute);margin-top:8px}
+input{width:100%;font:inherit;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);margin-top:3px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+ul{padding:0;list-style:none}li{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.pic{padding:4px 10px;min-height:36px}.err{color:var(--bad);font-size:.9rem}
+.nota{color:var(--mute);font-size:.82rem;margin-top:14px}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Passaggio sotto i ponti</h1><button id="btn" type="button">Aggiorna</button></header>
+<p class="stato" id="stato">Carico i dati…</p>
+<p class="agg" id="agg"></p>
+<div id="avvisi" aria-live="polite"></div>
+<section id="ponti" aria-label="Ponti"></section>
+<details>
+<summary>Impostazioni e ponti</summary>
+<div class="g">
+<label>Altezza mezzo (cm)<input id="h" type="number" inputmode="decimal"></label>
+<label>Margine di sicurezza (cm)<input id="s" type="number" inputmode="decimal"></label>
+<label>Soglia di attenzione (cm)<input id="a" type="number" inputmode="decimal"></label>
+</div>
+<h2 style="font-size:1rem;margin:16px 0 0">Ponti inseriti</h2>
+<ul id="lista"></ul>
+<form id="nuovo">
+<h2 style="font-size:1rem;margin:12px 0 0">Aggiungi un ponte</h2>
+<label>Nome<input id="pn" type="text" autocomplete="off"></label>
+<label>Quota dell’intradosso (cm sullo zero di Punta della Salute)<input id="pi" type="text" inputmode="decimal" autocomplete="off"></label>
+<div class="g">
+<label>Latitudine (facoltativa)<input id="pla" type="text" inputmode="decimal"></label>
+<label>Longitudine (facoltativa)<input id="plo" type="text" inputmode="decimal"></label>
+<label>Scarto da Punta Salute, cm (facoltativo)<input id="pof" type="text" inputmode="decimal"></label>
+</div>
+<p class="err" id="err"></p>
+<button type="submit">Aggiungi ponte</button>
+</form>
+<label>Indirizzo del proxy, solo se serve (usa {url} dove va l’indirizzo del file)<input id="proxy" type="text" placeholder="https://esempio.workers.dev/?url={url}"></label>
+</details>
+<p class="nota">Dati del Centro Previsioni e Segnalazioni Maree, Comune di Venezia (CC-BY). Dati grezzi, non validati. Livello misurato dalla stazione più vicina quando è recente, altrimenti previsione: marea astronomica più scarto tra i picchi previsti. Questo strumento è un ausilio: la decisione spetta all’equipaggio.</p>
+</main>
+<script src="app.js" defer></script>
+</body>
+</html>

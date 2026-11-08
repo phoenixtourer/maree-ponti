@@ -1,0 +1,29 @@
+MAREE E PONTI - app web installabile (PWA)
+
+CONTENUTO
+ index.html, app.js ......... l'app
+ manifest.webmanifest, sw.js . installazione su Android e funzionamento offline
+ icon-192.png, icon-512.png .. icone
+ worker.js .................. proxy facoltativo (vedi sotto)
+
+COME USARLA
+ 1. Metti l'intera cartella su un sito con indirizzo https (per esempio Netlify o GitHub Pages).
+ 2. Apri l'indirizzo con Chrome su Android, menu (tre puntini) > "Installa app" o "Aggiungi a schermata Home".
+ 3. Apri le Impostazioni nell'app e inserisci i ponti: nome e quota dell'intradosso
+    in cm sullo zero di Punta della Salute. Senza ponti l'app non dà nessun giudizio.
+ 4. Altezza mezzo, margine di sicurezza e soglia di attenzione sono già 185 / 20 / 10 cm.
+
+SE I DATI NON SI CARICANO
+ L'app mostra un avviso. Probabile causa: il portale del Comune non consente la lettura diretta
+ dal browser (CORS) o blocca le richieste automatiche. Soluzione: pubblicare worker.js come
+ Cloudflare Worker gratuito e scrivere il suo indirizzo nelle Impostazioni, nel campo proxy:
+   https://IL-TUO-WORKER.workers.dev/?url={url}
+
+FONTI (Comune di Venezia, CPSM, licenza CC-BY)
+ livello.json, previsione.json, as2026min.json, as2027min.json  su dati.venezia.it/sites/default/files/dataset/opendata/
+ Dati grezzi non validati. Ora dei file: solare (UTC+1). Valori della previsione arrotondati a 5 cm.
+ L'app usa il file 2026 e, dal 1 dicembre 2026, anche quello 2027 (uniti in automatico).
+ Per il 2028 servirà aggiungere il file as2028min.json in app.js (chiedi pure aiuto).
+
+LIMITI
+ Strumento di ausilio: la decisione spetta all'equipaggio.
